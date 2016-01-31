@@ -11,12 +11,6 @@ Plan for today
 - NMDS
 - Correspondence analysis
 
-Slide With Code
-========================================================
-
-```{r}
-summary(cars)
-```
 
 Goals of ordination
 ========================================================
@@ -29,7 +23,53 @@ Ordination
 
 - Imagine an n × p data set containing n objects and p variables
 
+PCA
+========================================================
 
+- The first principal axis (or principal-component axis) of a PCA of this data set is the line that goes through the greatest dimension of the concentration ellipsoid describing this multinormal distribution
+
+- objects are represented as points and variables are displayed as arrows
+
+Prepare the data
+========================================================
+
+```{r}
+# Load the required packages
+# (vegan must be loaded after ade4 to avoid some conflicts)
+library(ade4)
+library(vegan)
+library(gclus)
+library(ape)
+
+# Load additional functions
+# (files must be in the working directory)
+source("evplot.R")
+source("cleanplot.pca.R")
+source("PCA.R")
+source("CA.R")
+```
+PCA on the environmental dataset
+========================================================
+```{r}
+# Import the data from CSV files
+# (files must be in the working directory)
+spe <- read.csv("DoubsSpe.csv", row.names=1)
+env <- read.csv("DoubsEnv.csv", row.names=1)
+spa <- read.csv("DoubsSpa.csv", row.names=1)
+# Remove empty site 8
+spe <- spe[-8,]
+env <- env[-8,]
+spa <- spa[-8,]
+
+
+
+# PCA based on a correlation matrix
+# Argument scale=TRUE calls for a standardization of the variables
+env.pca <- rda(env, scale=TRUE)
+env.pca
+summary(env.pca) # Default scaling 2
+summary(env.pca, scaling=1)
+```
 
 Slide With Plot
 ========================================================

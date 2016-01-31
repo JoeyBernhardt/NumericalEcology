@@ -1,0 +1,39 @@
+Numerical Ecology Chapter 9
+========================================================
+author: Joey Bernhardt
+date: January 31 2016
+
+Plan for today
+========================================================
+
+- PCA
+- PCoA
+- NMDS
+- Correspondence analysis
+
+Slide With Code
+========================================================
+
+```{r}
+summary(cars)
+```
+
+Goals of ordination
+========================================================
+
+- represent the data along a reduced number of orthogonal axes, constructed in such a way that they represent, in decreasing order, the main trends of the data
+
+
+Ordination
+========================================================
+
+- Imagine an n × p data set containing n objects and p variables
+
+
+
+Slide With Plot
+========================================================
+
+```{r, echo=FALSE}
+plot(cars)
+```

@@ -7,7 +7,6 @@ Joey and Sean
 - NMDS
 - Correspondence analysis
 
-
 ## Load packages and functions
 
 
@@ -29,6 +28,202 @@ source("PCA.R")
 source("CA.R")
 ```
 
+## NMDS
+- the objective is to plot dissimilar objects far apart in the ordination space and similar objects close to one another.
+- can use any distance matrix
+- can deal with missing data
+
+
+## NMDS applied to the varespec data: vegetation lichen pastures
+
+
+```r
+data(varespec) ## 44 species, lots of zeros, so  not amenable to PCA
+str(varespec)
+```
+
+```
+## 'data.frame':	24 obs. of  44 variables:
+##  $ Callvulg: num  0.55 0.67 0.1 0 0 ...
+##  $ Empenigr: num  11.13 0.17 1.55 15.13 12.68 ...
+##  $ Rhodtome: num  0 0 0 2.42 0 0 1.55 0 0.35 0.07 ...
+##  $ Vaccmyrt: num  0 0.35 0 5.92 0 ...
+##  $ Vaccviti: num  17.8 12.1 13.5 16 23.7 ...
+##  $ Pinusylv: num  0.07 0.12 0.25 0 0.03 0.12 0.1 0.1 0.05 0.12 ...
+##  $ Descflex: num  0 0 0 3.7 0 0.02 0.78 0 0.4 0 ...
+##  $ Betupube: num  0 0 0 0 0 0 0.02 0 0 0 ...
+##  $ Vacculig: num  1.6 0 0 1.12 0 0 2 0 0.2 0 ...
+##  $ Diphcomp: num  2.07 0 0 0 0 0 0 0 0 0.07 ...
+##  $ Dicrsp  : num  0 0.33 23.43 0 0 ...
+##  $ Dicrfusc: num  1.62 10.92 0 3.63 3.42 ...
+##  $ Dicrpoly: num  0 0.02 1.68 0 0.02 0.02 0 0.23 0.2 0 ...
+##  $ Hylosple: num  0 0 0 6.7 0 0 0 0 9.97 0 ...
+##  $ Pleuschr: num  4.67 37.75 32.92 58.07 19.42 ...
+##  $ Polypili: num  0.02 0.02 0 0 0.02 0.02 0 0 0 0 ...
+##  $ Polyjuni: num  0.13 0.23 0.23 0 2.12 1.58 0 0.02 0.08 0.02 ...
+##  $ Polycomm: num  0 0 0 0.13 0 0.18 0 0 0 0 ...
+##  $ Pohlnuta: num  0.13 0.03 0.32 0.02 0.17 0.07 0.1 0.13 0.07 0.03 ...
+##  $ Ptilcili: num  0.12 0.02 0.03 0.08 1.8 0.27 0.03 0.1 0.03 0.25 ...
+##  $ Barbhatc: num  0 0 0 0.08 0.02 0.02 0 0 0 0.07 ...
+##  $ Cladarbu: num  21.73 12.05 3.58 1.42 9.08 ...
+##  $ Cladrang: num  21.47 8.13 5.52 7.63 9.22 ...
+##  $ Cladstel: num  3.5 0.18 0.07 2.55 0.05 ...
+##  $ Cladunci: num  0.3 2.65 8.93 0.15 0.73 0.25 2.38 0.82 0.05 0.95 ...
+##  $ Cladcocc: num  0.18 0.13 0 0 0.08 0.1 0.17 0.15 0.02 0.17 ...
+##  $ Cladcorn: num  0.23 0.18 0.2 0.38 1.42 0.25 0.13 0.05 0.03 0.05 ...
+##  $ Cladgrac: num  0.25 0.23 0.48 0.12 0.5 0.18 0.18 0.22 0.07 0.23 ...
+##  $ Cladfimb: num  0.25 0.25 0 0.1 0.17 0.1 0.2 0.22 0.1 0.18 ...
+##  $ Cladcris: num  0.23 1.23 0.07 0.03 1.78 0.12 0.2 0.17 0.02 0.57 ...
+##  $ Cladchlo: num  0 0 0.1 0 0.05 0.05 0.02 0 0 0.02 ...
+##  $ Cladbotr: num  0 0 0.02 0.02 0.05 0.02 0 0 0.02 0.07 ...
+##  $ Cladamau: num  0.08 0 0 0 0 0 0 0 0 0 ...
+##  $ Cladsp  : num  0.02 0 0 0.02 0 0 0.02 0.02 0 0.07 ...
+##  $ Cetreric: num  0.02 0.15 0.78 0 0 0 0.02 0.18 0 0.18 ...
+##  $ Cetrisla: num  0 0.03 0.12 0 0 0 0 0.08 0.02 0.02 ...
+##  $ Flavniva: num  0.12 0 0 0 0.02 0.02 0 0 0 0 ...
+##  $ Nepharct: num  0.02 0 0 0 0 0 0 0 0 0 ...
+##  $ Stersp  : num  0.62 0.85 0.03 0 1.58 0.28 0 0.03 0.02 0.03 ...
+##  $ Peltapht: num  0.02 0 0 0.07 0.33 0 0 0 0 0.02 ...
+##  $ Icmaeric: num  0 0 0 0 0 0 0 0.07 0 0 ...
+##  $ Cladcerv: num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Claddefo: num  0.25 1 0.33 0.15 1.97 0.37 0.15 0.67 0.08 0.47 ...
+##  $ Cladphyl: num  0 0 0 0 0 0 0 0 0 0 ...
+```
+
+## metaMDS - a wrapper function
+
+- Wraps several recommended procedures into one command:
+ + takes raw data and performs 'Wisconsin double standardization' (so abundance isn't influencing similarity)
+ + calculates specified dissimilarity matrix
+ + runs vegan function `monoMDS` many times with random starts, stopping when it finds two similar configurations with minimum stress
+ + rotates solution so largest variation of site score is on first axis
+ + other details in [vegan tutor](http://cc.oulu.fi/~jarioksa/opetus/metodi/vegantutor.pdf)
+ 
+## dissimilarity indices
+
+- `metaMDS` automatically standardizes and then calculates specified dissimilarity index
+- `vegdist` will take a matrix of sites (rows) and variables/species (columns) and calculate specied dissimilarity index, outputs class `dist`
+
+```r
+varespec.kul <- vegdist(varespec, method="kulczynski")
+str(varespec.kul)
+```
+
+```
+## Class 'dist'  atomic [1:276] 0.531 0.668 0.549 0.375 0.508 ...
+##   ..- attr(*, "Size")= int 24
+##   ..- attr(*, "Labels")= chr [1:24] "18" "15" "24" "27" ...
+##   ..- attr(*, "Diag")= logi FALSE
+##   ..- attr(*, "Upper")= logi FALSE
+##   ..- attr(*, "method")= chr "kulczynski"
+##   ..- attr(*, "call")= language vegdist(x = varespec, method = "kulczynski")
+```
+
+## Running NMDS
+
+
+```r
+varespec.nmds.bray <- metaMDS(varespec, distance="bray", trace=FALSE, trymax=100) ## trace = FALSE, won't show all the outputs, trymax= number of starts
+varespec.nmds.bray
+```
+
+```
+## 
+## Call:
+## metaMDS(comm = varespec, distance = "bray", trymax = 100, trace = FALSE) 
+## 
+## global Multidimensional Scaling using monoMDS
+## 
+## Data:     wisconsin(sqrt(varespec)) 
+## Distance: bray 
+## 
+## Dimensions: 2 
+## Stress:     0.1825658 
+## Stress type 1, weak ties
+## Two convergent solutions found after 17 tries
+## Scaling: centring, PC rotation, halfchange scaling 
+## Species: expanded scores based on 'wisconsin(sqrt(varespec))'
+```
+
+
+# ```{r}
+# spe.nmds <- metaMDS(spe, distance="bray")
+# spe.nmds
+# spe.nmds$stress
+# plot(spe.nmds, type="t", main=paste("NMDS/Bray - Stress =", 
+# 	round(spe.nmds$stress,3)))
+# ```
+
+
+
+## plotting NMDS
+
+
+```r
+plot(varespec.nmds.bray, type="t")
+```
+
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-6-1.png) 
+
+
+## With many variables/sites, ordination plots can quickly become overwhelming
+- some built-in function to help include:
+ + `make.cepnames` (shortens latin names to 6 char variables)
+ + `orditorp` (reduces overlapping points and variable names)
+ + `ordilabel` 
+
+## evaluating NMDS mapping
+
+
+```r
+stressplot(varespec.nmds.bray) ## plots the observed disimilarity values vs. their ordination distance. If NMDS is a good representation of actual values, you'll see a good fit
+```
+
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-7-1.png) 
+
+
+## goodness of fit
+
+```r
+gof <- goodness(varespec.nmds.bray) # gof for each site. 
+plot(varespec.nmds.bray, type="t", main="goodness of fit") # larger circles represent plots that don't have a strong fit with original disimilarity matrix.
+points(varespec.nmds.bray, display="sites", cex=gof*100)
+```
+
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-8-1.png) 
+
+## Comparing ordinations
+
+- Comparing different ordinations can be difficult because of slightly
+different orientation and scaling. Procrustes rotation using `procrustes` allows comparison
+
+```r
+varespec.nmds.eu <- metaMDS(varespec, distance="eu", trace=FALSE, trymax=100) # use euclidean distance - probably not a good choice for most community analyses
+pro <- procrustes(varespec.nmds.bray, varespec.nmds.eu)
+```
+
+## Comparing ordinations
+
+
+```r
+plot(pro, cex=1.5)
+```
+
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-10-1.png) 
+
+## Comparing ordinations
+
+
+```r
+plot(pro, kind=2) # shows the shift in sites between two ordinations.
+```
+
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-11-1.png) 
+
+
+
+
+
 ## Import data
 
 ```r
@@ -43,9 +238,21 @@ spa <- spa[-8,]
 ```
 
 ## Intro to CA
--CA is well suited to the analysis of species abundance data without pre-transformation. 
+- CA is well suited to the analysis of species abundance data without pre-transformation. 
 
--data submitted to CA must be frequencies or frequency-like, dimensionally homogeneous and non-negative (as is the case of species counts or presence–absence data)
+- data submitted to CA must be frequencies or frequency-like, dimensionally homogeneous and non-negative (as is the case of species counts or presence–absence data)
+
+-  raw data are transformed into a matrix Q, of cell-by-cell contributions to the pearson χ 2 statistic
+
+- get an ordination, where the χ 2 distance is preserved among sites instead of the Euclidean distance. The χ 2 distance is not influenced by double zeros
+
+## How CA differs from PCA
+- In both PCA and CA the weights are derived by eigenanalysis
+- In PCA, the matrix of species abundances is transformed into a matrix of covariances or correlations, each abundance value being replaced by a measure of its correlation (or covariance) with other abundances in other quadrats
+- In CA, the abundance data is transformed to a chi-square statistic, which is used to depict the degree associations among sites depart from independence
+-  the chi-square metric in CA preserves ecological distance by modeling differences in associations rather than abundances of single species. 
+
+- the system of weights used to score sites or quadrats is derived from a metric of species associations, and the more these associations depart from independence, the further separated final scores will be
 
 
 ## CA of the raw species dataset (original species abundances)
@@ -309,7 +516,7 @@ ev2 <- spe.ca$CA$eig
 evplot(ev2)
 ```
 
-![](Chap-9-presentation_files/figure-html/unnamed-chunk-6-1.png) 
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-15-1.png) 
 -things to note: the first axis is extremely dominant. 
 
 ## CA biplots
@@ -322,7 +529,7 @@ plot(spe.ca, scaling=1, main="CA fish abundances - biplot scaling 1")
 plot(spe.ca, main="CA fish abundances - biplot scaling 2")
 ```
 
-![](Chap-9-presentation_files/figure-html/unnamed-chunk-7-1.png) 
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-16-1.png) 
 ## A posteriori projection of environmental variables in a CA
 -envfit finds vectors or factor averages of environmental variables. [...] The projections of points onto vectors have maximum correlation with corresponding environmental variables, and the factors show the averages of factor levels”
 	
@@ -342,15 +549,15 @@ plot(spe.ca, main="CA fish abundances - biplot scaling 2")
 ##          CA1      CA2     r2 Pr(>r)    
 ## das -0.94801 -0.31825 0.6889  0.001 ***
 ## alt  0.81141  0.58448 0.8080  0.001 ***
-## pen  0.73753  0.67531 0.2976  0.006 ** 
-## deb -0.92837 -0.37166 0.4440  0.002 ** 
-## pH   0.50723 -0.86181 0.0908  0.212    
+## pen  0.73753  0.67531 0.2976  0.004 ** 
+## deb -0.92837 -0.37166 0.4440  0.001 ***
+## pH   0.50723 -0.86181 0.0908  0.248    
 ## dur -0.71728 -0.69678 0.4722  0.001 ***
 ## pho -0.99897  0.04533 0.1757  0.086 .  
-## nit -0.94906 -0.31511 0.4510  0.002 ** 
-## amm -0.97495  0.22241 0.1762  0.079 .  
+## nit -0.94906 -0.31511 0.4510  0.001 ***
+## amm -0.97495  0.22241 0.1762  0.083 .  
 ## oxy  0.93352 -0.35854 0.6263  0.001 ***
-## dbo -0.94094  0.33857 0.2237  0.040 *  
+## dbo -0.94094  0.33857 0.2237  0.049 *  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## Permutation: free
@@ -363,7 +570,7 @@ plot(spe.ca.env)
 plot(spe.ca.env, p.max=0.05, col=3)
 ```
 
-![](Chap-9-presentation_files/figure-html/unnamed-chunk-8-1.png) 
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-17-1.png) 
 
 ## Species data table ordered after the CA result
 
@@ -414,7 +621,7 @@ spe.CA.PL <- CA(spe)
 biplot(spe.CA.PL, cex=1)
 ```
 
-![](Chap-9-presentation_files/figure-html/unnamed-chunk-10-1.png) 
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-19-1.png) 
 
 ```r
 # Ordering of the data table following the first CA axis
@@ -503,87 +710,5 @@ t(spe[order(spe.CA.PL$F[,1]), order(spe.CA.PL$V[,1])])
 ## OMB  2 0  3 0
 ## TRU  5 5  5 3
 ```
-
-## NMDS
-- the objective is to plot dissimilar objects far apart in the ordination space and similar objects close to one another.
-- can use any distance matrix
-- can deal with missing data
-
-
-## NMDS applied to the fish species - Bray-Curtis distance matrix
-
-
-```r
-spe.nmds <- metaMDS(spe, distance="bray")
-```
-
-```
-## Run 0 stress 0.07477822 
-## Run 1 stress 0.1110707 
-## Run 2 stress 0.122174 
-## Run 3 stress 0.1242998 
-## Run 4 stress 0.0737622 
-## ... New best solution
-## ... procrustes: rmse 0.01939253  max resid 0.09464461 
-## Run 5 stress 0.08696388 
-## Run 6 stress 0.1222431 
-## Run 7 stress 0.08892174 
-## Run 8 stress 0.1116308 
-## Run 9 stress 0.08841678 
-## Run 10 stress 0.08797477 
-## Run 11 stress 0.1118887 
-## Run 12 stress 0.1104531 
-## Run 13 stress 0.1159169 
-## Run 14 stress 0.1111187 
-## Run 15 stress 0.08841667 
-## Run 16 stress 0.07376253 
-## ... procrustes: rmse 0.000184464  max resid 0.0008864944 
-## *** Solution reached
-```
-
-```r
-spe.nmds
-```
-
-```
-## 
-## Call:
-## metaMDS(comm = spe, distance = "bray") 
-## 
-## global Multidimensional Scaling using monoMDS
-## 
-## Data:     spe 
-## Distance: bray 
-## 
-## Dimensions: 2 
-## Stress:     0.0737622 
-## Stress type 1, weak ties
-## Two convergent solutions found after 16 tries
-## Scaling: centring, PC rotation, halfchange scaling 
-## Species: expanded scores based on 'spe'
-```
-
-```r
-spe.nmds$stress
-```
-
-```
-## [1] 0.0737622
-```
-
-```r
-plot(spe.nmds, type="t", main=paste("NMDS/Bray - Stress =", 
-	round(spe.nmds$stress,3)))
-```
-
-![](Chap-9-presentation_files/figure-html/unnamed-chunk-11-1.png) 
-
-
-
-
-
-
-## Slide with Plot
-
-![](Chap-9-presentation_files/figure-html/unnamed-chunk-12-1.png) 
-
+## useful links
+- [PCA vs CA?](http://stats.stackexchange.com/questions/70533/using-principal-components-analysis-vs-correspondence-analysis)

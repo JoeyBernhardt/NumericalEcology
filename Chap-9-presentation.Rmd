@@ -4,7 +4,7 @@ author: "Joey and Sean"
 output: 
   ioslides_presentation: 
     keep_md: yes
-    smaller: true
+    smaller: yes
     widescreen: yes
 ---
 
@@ -13,7 +13,6 @@ output:
 - PCoA
 - NMDS
 - Correspondence analysis
-
 
 ## Load packages and functions
 
@@ -34,6 +33,107 @@ source("PCA.R")
 source("CA.R")
 ```
 
+## NMDS
+- the objective is to plot dissimilar objects far apart in the ordination space and similar objects close to one another.
+- can use any distance matrix
+- can deal with missing data
+
+
+## NMDS applied to the varespec data: vegetation lichen pastures
+
+```{r}
+data(varespec) ## 44 species, lots of zeros, so  not amenable to PCA
+str(varespec)
+```
+
+## metaMDS - a wrapper function
+
+- Wraps several recommended procedures into one command:
+ + takes raw data and performs 'Wisconsin double standardization' (so abundance isn't influencing similarity)
+ + calculates specified dissimilarity matrix
+ + runs vegan function `monoMDS` many times with random starts, stopping when it finds two similar configurations with minimum stress
+ + rotates solution so largest variation of site score is on first axis
+ + other details in [vegan tutor](http://cc.oulu.fi/~jarioksa/opetus/metodi/vegantutor.pdf)
+ 
+## dissimilarity indices
+
+- `metaMDS` automatically standardizes and then calculates specified dissimilarity index
+- `vegdist` will take a matrix of sites (rows) and variables/species (columns) and calculate specied dissimilarity index, outputs class `dist`
+```{r}
+varespec.kul <- vegdist(varespec, method="kulczynski")
+str(varespec.kul)
+```
+
+## Running NMDS
+
+```{r}
+varespec.nmds.bray <- metaMDS(varespec, distance="bray", trace=FALSE, trymax=100) ## trace = FALSE, won't show all the outputs, trymax= number of starts
+varespec.nmds.bray
+```
+
+
+# ```{r}
+# spe.nmds <- metaMDS(spe, distance="bray")
+# spe.nmds
+# spe.nmds$stress
+# plot(spe.nmds, type="t", main=paste("NMDS/Bray - Stress =", 
+# 	round(spe.nmds$stress,3)))
+# ```
+
+
+
+## plotting NMDS
+
+```{r}
+plot(varespec.nmds.bray, type="t")
+```
+
+
+## With many variables/sites, ordination plots can quickly become overwhelming
+- some built-in function to help include:
+ + `make.cepnames` (shortens latin names to 6 char variables)
+ + `orditorp` (reduces overlapping points and variable names)
+ + `ordilabel` 
+
+## evaluating NMDS mapping
+
+```{r}
+stressplot(varespec.nmds.bray) ## plots the observed disimilarity values vs. their ordination distance. If NMDS is a good representation of actual values, you'll see a good fit
+```
+
+
+## goodness of fit
+```{r}
+gof <- goodness(varespec.nmds.bray) # gof for each site. 
+plot(varespec.nmds.bray, type="t", main="goodness of fit") # larger circles represent plots that don't have a strong fit with original disimilarity matrix.
+points(varespec.nmds.bray, display="sites", cex=gof*100)
+```
+
+## Comparing ordinations
+
+- Comparing different ordinations can be difficult because of slightly
+different orientation and scaling. Procrustes rotation using `procrustes` allows comparison
+```{r}
+varespec.nmds.eu <- metaMDS(varespec, distance="eu", trace=FALSE, trymax=100) # use euclidean distance - probably not a good choice for most community analyses
+pro <- procrustes(varespec.nmds.bray, varespec.nmds.eu)
+```
+
+## Comparing ordinations
+
+```{r}
+plot(pro, cex=1.5)
+```
+
+## Comparing ordinations
+
+```{r}
+plot(pro, kind=2) # shows the shift in sites between two ordinations.
+```
+
+
+
+
+
 ## Import data
 ```{r}
 # (files must be in the working directory)
@@ -47,9 +147,21 @@ spa <- spa[-8,]
 ```
 
 ## Intro to CA
--CA is well suited to the analysis of species abundance data without pre-transformation. 
+- CA is well suited to the analysis of species abundance data without pre-transformation. 
 
--data submitted to CA must be frequencies or frequency-like, dimensionally homogeneous and non-negative (as is the case of species counts or presence–absence data)
+- data submitted to CA must be frequencies or frequency-like, dimensionally homogeneous and non-negative (as is the case of species counts or presence–absence data)
+
+-  raw data are transformed into a matrix Q, of cell-by-cell contributions to the pearson χ 2 statistic
+
+- get an ordination, where the χ 2 distance is preserved among sites instead of the Euclidean distance. The χ 2 distance is not influenced by double zeros
+
+## How CA differs from PCA
+- In both PCA and CA the weights are derived by eigenanalysis
+- In PCA, the matrix of species abundances is transformed into a matrix of covariances or correlations, each abundance value being replaced by a measure of its correlation (or covariance) with other abundances in other quadrats
+- In CA, the abundance data is transformed to a chi-square statistic, which is used to depict the degree associations among sites depart from independence
+-  the chi-square metric in CA preserves ecological distance by modeling differences in associations rather than abundances of single species. 
+
+- the system of weights used to score sites or quadrats is derived from a metric of species associations, and the more these associations depart from independence, the further separated final scores will be
 
 
 ## CA of the raw species dataset (original species abundances)
@@ -116,31 +228,5 @@ biplot(spe.CA.PL, cex=1)
 summary(spe.CA.PL)
 t(spe[order(spe.CA.PL$F[,1]), order(spe.CA.PL$V[,1])])
 ```
-
-## NMDS
-- the objective is to plot dissimilar objects far apart in the ordination space and similar objects close to one another.
-- can use any distance matrix
-- can deal with missing data
-
-
-## NMDS applied to the fish species - Bray-Curtis distance matrix
-
-```{r}
-spe.nmds <- metaMDS(spe, distance="bray")
-spe.nmds
-spe.nmds$stress
-plot(spe.nmds, type="t", main=paste("NMDS/Bray - Stress =", 
-	round(spe.nmds$stress,3)))
-```
-
-
-
-
-
-
-## Slide with Plot
-
-```{r, echo=FALSE}
-plot(cars)
-```
-
+## useful links
+- [PCA vs CA?](http://stats.stackexchange.com/questions/70533/using-principal-components-analysis-vs-correspondence-analysis)

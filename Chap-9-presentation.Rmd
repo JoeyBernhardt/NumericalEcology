@@ -37,6 +37,7 @@ source("CA.R")
 - the objective is to plot dissimilar objects far apart in the ordination space and similar objects close to one another.
 - can use any distance matrix
 - can deal with missing data
+- NMDS is rank based approach which attempts to represent pairwise dissimilarity between objects in low dimensional space 
 
 
 ## NMDS applied to the varespec data: vegetation lichen pastures
@@ -54,15 +55,6 @@ str(varespec)
  + runs vegan function `monoMDS` many times with random starts, stopping when it finds two similar configurations with minimum stress
  + rotates solution so largest variation of site score is on first axis
  + other details in [vegan tutor](http://cc.oulu.fi/~jarioksa/opetus/metodi/vegantutor.pdf)
- 
-## dissimilarity indices
-
-- `metaMDS` automatically standardizes and then calculates specified dissimilarity index
-- `vegdist` will take a matrix of sites (rows) and variables/species (columns) and calculate specied dissimilarity index, outputs class `dist`
-```{r}
-varespec.kul <- vegdist(varespec, method="kulczynski")
-str(varespec.kul)
-```
 
 ## Running NMDS
 
@@ -70,16 +62,6 @@ str(varespec.kul)
 varespec.nmds.bray <- metaMDS(varespec, distance="bray", trace=FALSE, trymax=100) ## trace = FALSE, won't show all the outputs, trymax= number of starts
 varespec.nmds.bray
 ```
-
-
-# ```{r}
-# spe.nmds <- metaMDS(spe, distance="bray")
-# spe.nmds
-# spe.nmds$stress
-# plot(spe.nmds, type="t", main=paste("NMDS/Bray - Stress =", 
-# 	round(spe.nmds$stress,3)))
-# ```
-
 
 
 ## plotting NMDS
@@ -98,14 +80,17 @@ plot(varespec.nmds.bray, type="t")
 ## evaluating NMDS mapping
 
 ```{r}
-stressplot(varespec.nmds.bray) ## plots the observed disimilarity values vs. their ordination distance. If NMDS is a good representation of actual values, you'll see a good fit
+stressplot(varespec.nmds.bray) 
+## plots the observed disimilarity values vs. their ordination distance. 
+## If NMDS is a good representation of actual values, you'll see a good fit
 ```
 
 
 ## goodness of fit
 ```{r}
 gof <- goodness(varespec.nmds.bray) # gof for each site. 
-plot(varespec.nmds.bray, type="t", main="goodness of fit") # larger circles represent plots that don't have a strong fit with original disimilarity matrix.
+plot(varespec.nmds.bray, type="t", main="goodness of fit") 
+# larger circles represent plots that don't have a strong fit with original disimilarity matrix.
 points(varespec.nmds.bray, display="sites", cex=gof*100)
 ```
 
@@ -114,7 +99,8 @@ points(varespec.nmds.bray, display="sites", cex=gof*100)
 - Comparing different ordinations can be difficult because of slightly
 different orientation and scaling. Procrustes rotation using `procrustes` allows comparison
 ```{r}
-varespec.nmds.eu <- metaMDS(varespec, distance="eu", trace=FALSE, trymax=100) # use euclidean distance - probably not a good choice for most community analyses
+varespec.nmds.eu <- metaMDS(varespec, distance="eu", trace=FALSE, trymax=100) 
+# use euclidean distance - probably not a good choice for most community analyses
 pro <- procrustes(varespec.nmds.bray, varespec.nmds.eu)
 ```
 
@@ -130,8 +116,53 @@ plot(pro, cex=1.5)
 plot(pro, kind=2) # shows the shift in sites between two ordinations.
 ```
 
+ 
+## dissimilarity indices
+
+- `metaMDS` automatically standardizes and then calculates specified dissimilarity index
+- `vegdist` will take a matrix of sites (rows) and variables/species (columns) and calculate specied dissimilarity index, outputs class `dist`
 
 
+## Overlaying environmental vectors onto ordination
+
+ - environmental data, paired with `varespec` data
+```{r}
+data(varechem)
+str(varechem)
+```
+
+## Overlaying vectors with envfit
+
+```{r}
+fit <- envfit(varespec.nmds.bray, varechem, permu=999)
+fit
+```
+
+- first two columns are direction cosines of the vectors, and `r2` gives the squared correlation coefficient
+- when plotted, vectors should be scaled by square root of `r2`. `plot` does this automatically (see next slide)
+- significances (`Pr>r`) are based on  random permutations of the data: if if you often get as good or better R2 with randomly permuted data, your values are insignificant.
+</small>
+
+## Plotting envfit output
+
+- The arrow points to the direction of most rapid change in the the
+environmental variable. Often this is called the direction of the
+gradient.
+- The length of the arrow is proportional to the correlation between
+ordination and environmental variable. Often this is called the
+strength of the gradient.
+
+```{r}
+plot(varespec.nmds.bray, display="sites")
+plot(fit, p.max=0.05) #only display variables that are significant
+```
+
+## Other options
+
+- `envfit` also works with factors
+- vector fitting implies a linear relationship between ordination and environment
+- function `ordisurf` fits surfaces of environmental variables to ordinations based on generalized additive models in function `gam` of package mgcv.
+- see vegan tutor or help files for more details.
 
 
 ## Import data
@@ -168,7 +199,6 @@ spa <- spa[-8,]
 ```{r}
 # Compute CA
 spe.ca <- cca(spe)
-spe.ca
 summary(spe.ca)		# default scaling 2
 summary(spe.ca, scaling=1) 
 ## things to note: the first axis has a very large eigenvalue. In CA, a value over 0.6 indicate a very strong gradient in the data. Note that the eigenvalues are the same in both scalings. The scaling affects the eigenvectors, not the eigenvalues. 
@@ -187,8 +217,9 @@ ev2 <- spe.ca$CA$eig
 ## plot 
 ```{r}
 evplot(ev2)
+## things to note: the first axis is extremely dominant. 
 ```
--things to note: the first axis is extremely dominant. 
+
 
 ## CA biplots
 ```{r}

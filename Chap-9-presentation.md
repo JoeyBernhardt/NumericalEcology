@@ -32,6 +32,7 @@ source("CA.R")
 - the objective is to plot dissimilar objects far apart in the ordination space and similar objects close to one another.
 - can use any distance matrix
 - can deal with missing data
+- NMDS is rank based approach which attempts to represent pairwise dissimilarity between objects in low dimensional space 
 
 
 ## NMDS applied to the varespec data: vegetation lichen pastures
@@ -98,26 +99,6 @@ str(varespec)
  + runs vegan function `monoMDS` many times with random starts, stopping when it finds two similar configurations with minimum stress
  + rotates solution so largest variation of site score is on first axis
  + other details in [vegan tutor](http://cc.oulu.fi/~jarioksa/opetus/metodi/vegantutor.pdf)
- 
-## dissimilarity indices
-
-- `metaMDS` automatically standardizes and then calculates specified dissimilarity index
-- `vegdist` will take a matrix of sites (rows) and variables/species (columns) and calculate specied dissimilarity index, outputs class `dist`
-
-```r
-varespec.kul <- vegdist(varespec, method="kulczynski")
-str(varespec.kul)
-```
-
-```
-## Class 'dist'  atomic [1:276] 0.531 0.668 0.549 0.375 0.508 ...
-##   ..- attr(*, "Size")= int 24
-##   ..- attr(*, "Labels")= chr [1:24] "18" "15" "24" "27" ...
-##   ..- attr(*, "Diag")= logi FALSE
-##   ..- attr(*, "Upper")= logi FALSE
-##   ..- attr(*, "method")= chr "kulczynski"
-##   ..- attr(*, "call")= language vegdist(x = varespec, method = "kulczynski")
-```
 
 ## Running NMDS
 
@@ -140,20 +121,10 @@ varespec.nmds.bray
 ## Dimensions: 2 
 ## Stress:     0.1825658 
 ## Stress type 1, weak ties
-## Two convergent solutions found after 17 tries
+## Two convergent solutions found after 14 tries
 ## Scaling: centring, PC rotation, halfchange scaling 
 ## Species: expanded scores based on 'wisconsin(sqrt(varespec))'
 ```
-
-
-# ```{r}
-# spe.nmds <- metaMDS(spe, distance="bray")
-# spe.nmds
-# spe.nmds$stress
-# plot(spe.nmds, type="t", main=paste("NMDS/Bray - Stress =", 
-# 	round(spe.nmds$stress,3)))
-# ```
-
 
 
 ## plotting NMDS
@@ -163,7 +134,7 @@ varespec.nmds.bray
 plot(varespec.nmds.bray, type="t")
 ```
 
-![](Chap-9-presentation_files/figure-html/unnamed-chunk-6-1.png) 
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-5-1.png) 
 
 
 ## With many variables/sites, ordination plots can quickly become overwhelming
@@ -176,21 +147,27 @@ plot(varespec.nmds.bray, type="t")
 
 
 ```r
-stressplot(varespec.nmds.bray) ## plots the observed disimilarity values vs. their ordination distance. If NMDS is a good representation of actual values, you'll see a good fit
+stressplot(varespec.nmds.bray) 
 ```
 
-![](Chap-9-presentation_files/figure-html/unnamed-chunk-7-1.png) 
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-6-1.png) 
+
+```r
+## plots the observed disimilarity values vs. their ordination distance. 
+## If NMDS is a good representation of actual values, you'll see a good fit
+```
 
 
 ## goodness of fit
 
 ```r
 gof <- goodness(varespec.nmds.bray) # gof for each site. 
-plot(varespec.nmds.bray, type="t", main="goodness of fit") # larger circles represent plots that don't have a strong fit with original disimilarity matrix.
+plot(varespec.nmds.bray, type="t", main="goodness of fit") 
+# larger circles represent plots that don't have a strong fit with original disimilarity matrix.
 points(varespec.nmds.bray, display="sites", cex=gof*100)
 ```
 
-![](Chap-9-presentation_files/figure-html/unnamed-chunk-8-1.png) 
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-7-1.png) 
 
 ## Comparing ordinations
 
@@ -198,7 +175,8 @@ points(varespec.nmds.bray, display="sites", cex=gof*100)
 different orientation and scaling. Procrustes rotation using `procrustes` allows comparison
 
 ```r
-varespec.nmds.eu <- metaMDS(varespec, distance="eu", trace=FALSE, trymax=100) # use euclidean distance - probably not a good choice for most community analyses
+varespec.nmds.eu <- metaMDS(varespec, distance="eu", trace=FALSE, trymax=100) 
+# use euclidean distance - probably not a good choice for most community analyses
 pro <- procrustes(varespec.nmds.bray, varespec.nmds.eu)
 ```
 
@@ -209,7 +187,7 @@ pro <- procrustes(varespec.nmds.bray, varespec.nmds.eu)
 plot(pro, cex=1.5)
 ```
 
-![](Chap-9-presentation_files/figure-html/unnamed-chunk-10-1.png) 
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-9-1.png) 
 
 ## Comparing ordinations
 
@@ -218,10 +196,103 @@ plot(pro, cex=1.5)
 plot(pro, kind=2) # shows the shift in sites between two ordinations.
 ```
 
-![](Chap-9-presentation_files/figure-html/unnamed-chunk-11-1.png) 
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-10-1.png) 
+
+ 
+## dissimilarity indices
+
+- `metaMDS` automatically standardizes and then calculates specified dissimilarity index
+- `vegdist` will take a matrix of sites (rows) and variables/species (columns) and calculate specied dissimilarity index, outputs class `dist`
 
 
+## Overlaying environmental vectors onto ordination
 
+ - environmental data, paired with `varespec` data
+
+```r
+data(varechem)
+str(varechem)
+```
+
+```
+## 'data.frame':	24 obs. of  14 variables:
+##  $ N       : num  19.8 13.4 20.2 20.6 23.8 22.8 26.6 24.2 29.8 28.1 ...
+##  $ P       : num  42.1 39.1 67.7 60.8 54.5 40.9 36.7 31 73.5 40.5 ...
+##  $ K       : num  140 167 207 234 181 ...
+##  $ Ca      : num  519 357 973 834 777 ...
+##  $ Mg      : num  90 70.7 209.1 127.2 125.8 ...
+##  $ S       : num  32.3 35.2 58.1 40.7 39.5 40.8 33.8 27.1 42.5 60.2 ...
+##  $ Al      : num  39 88.1 138 15.4 24.2 ...
+##  $ Fe      : num  40.9 39 35.4 4.4 3 ...
+##  $ Mn      : num  58.1 52.4 32.1 132 50.1 ...
+##  $ Zn      : num  4.5 5.4 16.8 10.7 6.6 9.1 7.4 5.2 9.3 9.1 ...
+##  $ Mo      : num  0.3 0.3 0.8 0.2 0.3 0.4 0.3 0.3 0.3 0.5 ...
+##  $ Baresoil: num  43.9 23.6 21.2 18.7 46 40.5 23 29.8 17.6 29.9 ...
+##  $ Humdepth: num  2.2 2.2 2 2.9 3 3.8 2.8 2 3 2.2 ...
+##  $ pH      : num  2.7 2.8 3 2.8 2.7 2.7 2.8 2.8 2.8 2.8 ...
+```
+
+## Overlaying vectors with envfit
+
+
+```r
+fit <- envfit(varespec.nmds.bray, varechem, permu=999)
+fit
+```
+
+```
+## 
+## ***VECTORS
+## 
+##             NMDS1    NMDS2     r2 Pr(>r)    
+## N        -0.05727 -0.99836 0.2537  0.051 .  
+## P         0.61969  0.78485 0.1938  0.097 .  
+## K         0.76641  0.64235 0.1809  0.104    
+## Ca        0.68516  0.72840 0.4119  0.005 ** 
+## Mg        0.63249  0.77457 0.4270  0.003 ** 
+## S         0.19133  0.98153 0.1752  0.107    
+## Al       -0.87163  0.49017 0.5269  0.001 ***
+## Fe       -0.93605  0.35186 0.4450  0.002 ** 
+## Mn        0.79871 -0.60172 0.5231  0.001 ***
+## Zn        0.61754  0.78654 0.1879  0.122    
+## Mo       -0.90306  0.42951 0.0609  0.505    
+## Baresoil  0.92493 -0.38015 0.2508  0.042 *  
+## Humdepth  0.93285 -0.36028 0.5200  0.001 ***
+## pH       -0.64800  0.76164 0.2308  0.059 .  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Permutation: free
+## Number of permutations: 999
+```
+
+- first two columns are direction cosines of the vectors, and `r2` gives the squared correlation coefficient
+- when plotted, vectors should be scaled by square root of `r2`. `plot` does this automatically (see next slide)
+- significances (`Pr>r`) are based on  random permutations of the data: if if you often get as good or better R2 with randomly permuted data, your values are insignificant.
+</small>
+
+## Plotting envfit output
+
+- The arrow points to the direction of most rapid change in the the
+environmental variable. Often this is called the direction of the
+gradient.
+- The length of the arrow is proportional to the correlation between
+ordination and environmental variable. Often this is called the
+strength of the gradient.
+
+
+```r
+plot(varespec.nmds.bray, display="sites")
+plot(fit, p.max=0.05) #only display variables that are significant
+```
+
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-13-1.png) 
+
+## Other options
+
+- `envfit` also works with factors
+- vector fitting implies a linear relationship between ordination and environment
+- function `ordisurf` fits surfaces of environmental variables to ordinations based on generalized additive models in function `gam` of package mgcv.
+- see vegan tutor or help files for more details.
 
 
 ## Import data
@@ -260,24 +331,6 @@ spa <- spa[-8,]
 ```r
 # Compute CA
 spe.ca <- cca(spe)
-spe.ca
-```
-
-```
-## Call: cca(X = spe)
-## 
-##               Inertia Rank
-## Total           1.167     
-## Unconstrained   1.167   26
-## Inertia is mean squared contingency coefficient 
-## 
-## Eigenvalues for unconstrained axes:
-##    CA1    CA2    CA3    CA4    CA5    CA6    CA7    CA8 
-## 0.6010 0.1444 0.1073 0.0834 0.0516 0.0418 0.0339 0.0288 
-## (Showed only 8 of all 26 unconstrained eigenvalues)
-```
-
-```r
 summary(spe.ca)		# default scaling 2
 ```
 
@@ -516,8 +569,12 @@ ev2 <- spe.ca$CA$eig
 evplot(ev2)
 ```
 
-![](Chap-9-presentation_files/figure-html/unnamed-chunk-15-1.png) 
--things to note: the first axis is extremely dominant. 
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-17-1.png) 
+
+```r
+## things to note: the first axis is extremely dominant. 
+```
+
 
 ## CA biplots
 
@@ -529,7 +586,7 @@ plot(spe.ca, scaling=1, main="CA fish abundances - biplot scaling 1")
 plot(spe.ca, main="CA fish abundances - biplot scaling 2")
 ```
 
-![](Chap-9-presentation_files/figure-html/unnamed-chunk-16-1.png) 
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-18-1.png) 
 ## A posteriori projection of environmental variables in a CA
 -envfit finds vectors or factor averages of environmental variables. [...] The projections of points onto vectors have maximum correlation with corresponding environmental variables, and the factors show the averages of factor levels”
 	
@@ -549,15 +606,15 @@ plot(spe.ca, main="CA fish abundances - biplot scaling 2")
 ##          CA1      CA2     r2 Pr(>r)    
 ## das -0.94801 -0.31825 0.6889  0.001 ***
 ## alt  0.81141  0.58448 0.8080  0.001 ***
-## pen  0.73753  0.67531 0.2976  0.004 ** 
+## pen  0.73753  0.67531 0.2976  0.003 ** 
 ## deb -0.92837 -0.37166 0.4440  0.001 ***
-## pH   0.50723 -0.86181 0.0908  0.248    
+## pH   0.50723 -0.86181 0.0908  0.227    
 ## dur -0.71728 -0.69678 0.4722  0.001 ***
-## pho -0.99897  0.04533 0.1757  0.086 .  
+## pho -0.99897  0.04533 0.1757  0.072 .  
 ## nit -0.94906 -0.31511 0.4510  0.001 ***
-## amm -0.97495  0.22241 0.1762  0.083 .  
+## amm -0.97495  0.22241 0.1762  0.074 .  
 ## oxy  0.93352 -0.35854 0.6263  0.001 ***
-## dbo -0.94094  0.33857 0.2237  0.049 *  
+## dbo -0.94094  0.33857 0.2237  0.030 *  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## Permutation: free
@@ -570,7 +627,7 @@ plot(spe.ca.env)
 plot(spe.ca.env, p.max=0.05, col=3)
 ```
 
-![](Chap-9-presentation_files/figure-html/unnamed-chunk-17-1.png) 
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-19-1.png) 
 
 ## Species data table ordered after the CA result
 
@@ -621,7 +678,7 @@ spe.CA.PL <- CA(spe)
 biplot(spe.CA.PL, cex=1)
 ```
 
-![](Chap-9-presentation_files/figure-html/unnamed-chunk-19-1.png) 
+![](Chap-9-presentation_files/figure-html/unnamed-chunk-21-1.png) 
 
 ```r
 # Ordering of the data table following the first CA axis

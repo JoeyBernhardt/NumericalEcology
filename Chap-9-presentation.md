@@ -342,15 +342,15 @@ plot(spe.ca, main="CA fish abundances - biplot scaling 2")
 ##          CA1      CA2     r2 Pr(>r)    
 ## das -0.94801 -0.31825 0.6889  0.001 ***
 ## alt  0.81141  0.58448 0.8080  0.001 ***
-## pen  0.73753  0.67531 0.2976  0.004 ** 
-## deb -0.92837 -0.37166 0.4440  0.001 ***
-## pH   0.50723 -0.86181 0.0908  0.232    
-## dur -0.71728 -0.69678 0.4722  0.003 ** 
-## pho -0.99897  0.04533 0.1757  0.061 .  
-## nit -0.94906 -0.31511 0.4510  0.001 ***
-## amm -0.97495  0.22241 0.1762  0.065 .  
+## pen  0.73753  0.67531 0.2976  0.006 ** 
+## deb -0.92837 -0.37166 0.4440  0.002 ** 
+## pH   0.50723 -0.86181 0.0908  0.212    
+## dur -0.71728 -0.69678 0.4722  0.001 ***
+## pho -0.99897  0.04533 0.1757  0.086 .  
+## nit -0.94906 -0.31511 0.4510  0.002 ** 
+## amm -0.97495  0.22241 0.1762  0.079 .  
 ## oxy  0.93352 -0.35854 0.6263  0.001 ***
-## dbo -0.94094  0.33857 0.2237  0.030 *  
+## dbo -0.94094  0.33857 0.2237  0.040 *  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## Permutation: free
@@ -505,9 +505,9 @@ t(spe[order(spe.CA.PL$F[,1]), order(spe.CA.PL$V[,1])])
 ```
 
 ## NMDS
--the objective is to plot dissimilar objects far apart in the ordination space and similar objects close to one another.
--can use any distance matrix
--can deal with missing data
+- the objective is to plot dissimilar objects far apart in the ordination space and similar objects close to one another.
+- can use any distance matrix
+- can deal with missing data
 
 
 ## NMDS applied to the fish species - Bray-Curtis distance matrix
@@ -519,22 +519,25 @@ spe.nmds <- metaMDS(spe, distance="bray")
 
 ```
 ## Run 0 stress 0.07477822 
-## Run 1 stress 0.1225935 
-## Run 2 stress 0.08695587 
-## Run 3 stress 0.07376284 
+## Run 1 stress 0.1110707 
+## Run 2 stress 0.122174 
+## Run 3 stress 0.1242998 
+## Run 4 stress 0.0737622 
 ## ... New best solution
-## ... procrustes: rmse 0.01938216  max resid 0.09468666 
-## Run 4 stress 0.07506662 
-## Run 5 stress 0.1169812 
-## Run 6 stress 0.1203435 
-## Run 7 stress 0.07429441 
-## Run 8 stress 0.08927186 
-## Run 9 stress 0.08844117 
-## Run 10 stress 0.0888619 
-## Run 11 stress 0.1222435 
-## Run 12 stress 0.1148198 
-## Run 13 stress 0.0737638 
-## ... procrustes: rmse 0.0002070063  max resid 0.0009934926 
+## ... procrustes: rmse 0.01939253  max resid 0.09464461 
+## Run 5 stress 0.08696388 
+## Run 6 stress 0.1222431 
+## Run 7 stress 0.08892174 
+## Run 8 stress 0.1116308 
+## Run 9 stress 0.08841678 
+## Run 10 stress 0.08797477 
+## Run 11 stress 0.1118887 
+## Run 12 stress 0.1104531 
+## Run 13 stress 0.1159169 
+## Run 14 stress 0.1111187 
+## Run 15 stress 0.08841667 
+## Run 16 stress 0.07376253 
+## ... procrustes: rmse 0.000184464  max resid 0.0008864944 
 ## *** Solution reached
 ```
 
@@ -553,9 +556,9 @@ spe.nmds
 ## Distance: bray 
 ## 
 ## Dimensions: 2 
-## Stress:     0.07376284 
+## Stress:     0.0737622 
 ## Stress type 1, weak ties
-## Two convergent solutions found after 13 tries
+## Two convergent solutions found after 16 tries
 ## Scaling: centring, PC rotation, halfchange scaling 
 ## Species: expanded scores based on 'spe'
 ```
@@ -565,7 +568,7 @@ spe.nmds$stress
 ```
 
 ```
-## [1] 0.07376284
+## [1] 0.0737622
 ```
 
 ```r

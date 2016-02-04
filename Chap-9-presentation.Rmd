@@ -118,9 +118,9 @@ t(spe[order(spe.CA.PL$F[,1]), order(spe.CA.PL$V[,1])])
 ```
 
 ## NMDS
--the objective is to plot dissimilar objects far apart in the ordination space and similar objects close to one another.
--can use any distance matrix
--can deal with missing data
+- the objective is to plot dissimilar objects far apart in the ordination space and similar objects close to one another.
+- can use any distance matrix
+- can deal with missing data
 
 
 ## NMDS applied to the fish species - Bray-Curtis distance matrix

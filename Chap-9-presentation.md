@@ -1,10 +1,12 @@
 # Chapter-9
+Joey and Sean  
 
-## Slide with Bullets
+## Plan for today
+- PCA
+- PCoA
+- NMDS
+- Correspondence analysis
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
 
 ## Load packages and functions
 
@@ -13,29 +15,7 @@
 # (vegan must be loaded after ade4 to avoid some conflicts)
 library(ade4)
 library(vegan)
-```
-
-```
-## Loading required package: permute
-## Loading required package: lattice
-## This is vegan 2.3-1
-## 
-## Attaching package: 'vegan'
-## 
-## The following object is masked from 'package:ade4':
-## 
-##     cca
-```
-
-```r
 library(gclus)
-```
-
-```
-## Loading required package: cluster
-```
-
-```r
 library(ape)
 ```
 
@@ -61,6 +41,12 @@ spe <- spe[-8,]
 env <- env[-8,]
 spa <- spa[-8,]
 ```
+
+## Intro to CA
+-CA is well suited to the analysis of species abundance data without pre-transformation. 
+
+-data submitted to CA must be frequencies or frequency-like, dimensionally homogeneous and non-negative (as is the case of species counts or presence–absence data)
+
 
 ## CA of the raw species dataset (original species abundances)
 
@@ -194,7 +180,7 @@ summary(spe.ca)		# default scaling 2
 ```
 
 ```r
-summary(spe.ca, scaling=1)
+summary(spe.ca, scaling=1) 
 ```
 
 ```
@@ -302,25 +288,20 @@ summary(spe.ca, scaling=1)
 ## 30 -0.62686 -0.007444  0.2190226  0.254487  0.119787  0.03366
 ```
 
+```r
+## things to note: the first axis has a very large eigenvalue. In CA, a value over 0.6 indicate a very strong gradient in the data. Note that the eigenvalues are the same in both scalings. The scaling affects the eigenvectors, not the eigenvalues. 
+```
+## Scaling options
+- when scaling = 1 the distances among objects approximate their x2 distances (i.e. object points close together are similar in their species frequencies). Any object near the point representing a species is likely to contain a high contribution of that species. 
+
+- when scaling = 2, ordination of species. Species points close to one another are likely to have similar relative frequencies among objects. 
+
+
+
 ## Plot eigenvalues and % of variance for each axis
 
 ```r
-(ev2 <- spe.ca$CA$eig)
-```
-
-```
-##          CA1          CA2          CA3          CA4          CA5 
-## 6.009926e-01 1.443709e-01 1.072938e-01 8.337321e-02 5.157826e-02 
-##          CA6          CA7          CA8          CA9         CA10 
-## 4.184649e-02 3.388638e-02 2.882547e-02 1.684112e-02 1.082639e-02 
-##         CA11         CA12         CA13         CA14         CA15 
-## 1.014213e-02 7.885549e-03 6.123133e-03 4.867260e-03 4.606481e-03 
-##         CA16         CA17         CA18         CA19         CA20 
-## 3.843808e-03 3.067492e-03 1.823032e-03 1.641868e-03 1.295163e-03 
-##         CA21         CA22         CA23         CA24         CA25 
-## 8.775034e-04 4.217149e-04 2.148505e-04 1.527935e-04 8.948679e-05 
-##         CA26 
-## 2.695049e-05
+ev2 <- spe.ca$CA$eig
 ```
 ## plot 
 
@@ -329,7 +310,7 @@ evplot(ev2)
 ```
 
 ![](Chap-9-presentation_files/figure-html/unnamed-chunk-6-1.png) 
-
+-things to note: the first axis is extremely dominant. 
 
 ## CA biplots
 
@@ -343,6 +324,9 @@ plot(spe.ca, main="CA fish abundances - biplot scaling 2")
 
 ![](Chap-9-presentation_files/figure-html/unnamed-chunk-7-1.png) 
 ## A posteriori projection of environmental variables in a CA
+-envfit finds vectors or factor averages of environmental variables. [...] The projections of points onto vectors have maximum correlation with corresponding environmental variables, and the factors show the averages of factor levels”
+	
+## CA biplot (scaling 2) of the Doubs fish abundance data with a posteriori projection of environmental variables
 
 
 ```r
@@ -358,15 +342,15 @@ plot(spe.ca, main="CA fish abundances - biplot scaling 2")
 ##          CA1      CA2     r2 Pr(>r)    
 ## das -0.94801 -0.31825 0.6889  0.001 ***
 ## alt  0.81141  0.58448 0.8080  0.001 ***
-## pen  0.73753  0.67531 0.2976  0.003 ** 
+## pen  0.73753  0.67531 0.2976  0.004 ** 
 ## deb -0.92837 -0.37166 0.4440  0.001 ***
-## pH   0.50723 -0.86181 0.0908  0.222    
-## dur -0.71728 -0.69678 0.4722  0.001 ***
-## pho -0.99897  0.04533 0.1757  0.074 .  
+## pH   0.50723 -0.86181 0.0908  0.232    
+## dur -0.71728 -0.69678 0.4722  0.003 ** 
+## pho -0.99897  0.04533 0.1757  0.061 .  
 ## nit -0.94906 -0.31511 0.4510  0.001 ***
-## amm -0.97495  0.22241 0.1762  0.084 .  
+## amm -0.97495  0.22241 0.1762  0.065 .  
 ## oxy  0.93352 -0.35854 0.6263  0.001 ***
-## dbo -0.94094  0.33857 0.2237  0.039 *  
+## dbo -0.94094  0.33857 0.2237  0.030 *  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## Permutation: free
@@ -520,6 +504,12 @@ t(spe[order(spe.CA.PL$F[,1]), order(spe.CA.PL$V[,1])])
 ## TRU  5 5  5 3
 ```
 
+## NMDS
+-the objective is to plot dissimilar objects far apart in the ordination space and similar objects close to one another.
+-can use any distance matrix
+-can deal with missing data
+
+
 ## NMDS applied to the fish species - Bray-Curtis distance matrix
 
 
@@ -529,9 +519,22 @@ spe.nmds <- metaMDS(spe, distance="bray")
 
 ```
 ## Run 0 stress 0.07477822 
-## Run 1 stress 0.08841679 
-## Run 2 stress 0.07478007 
-## ... procrustes: rmse 0.0004942738  max resid 0.002373289 
+## Run 1 stress 0.1225935 
+## Run 2 stress 0.08695587 
+## Run 3 stress 0.07376284 
+## ... New best solution
+## ... procrustes: rmse 0.01938216  max resid 0.09468666 
+## Run 4 stress 0.07506662 
+## Run 5 stress 0.1169812 
+## Run 6 stress 0.1203435 
+## Run 7 stress 0.07429441 
+## Run 8 stress 0.08927186 
+## Run 9 stress 0.08844117 
+## Run 10 stress 0.0888619 
+## Run 11 stress 0.1222435 
+## Run 12 stress 0.1148198 
+## Run 13 stress 0.0737638 
+## ... procrustes: rmse 0.0002070063  max resid 0.0009934926 
 ## *** Solution reached
 ```
 
@@ -550,9 +553,9 @@ spe.nmds
 ## Distance: bray 
 ## 
 ## Dimensions: 2 
-## Stress:     0.07477822 
+## Stress:     0.07376284 
 ## Stress type 1, weak ties
-## Two convergent solutions found after 2 tries
+## Two convergent solutions found after 13 tries
 ## Scaling: centring, PC rotation, halfchange scaling 
 ## Species: expanded scores based on 'spe'
 ```
@@ -562,7 +565,7 @@ spe.nmds$stress
 ```
 
 ```
-## [1] 0.07477822
+## [1] 0.07376284
 ```
 
 ```r

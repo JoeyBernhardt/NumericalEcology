@@ -1,20 +1,23 @@
 ---
 title: "Chapter-9"
+author: "Joey and Sean"
 output: 
   ioslides_presentation: 
     keep_md: yes
+    smaller: true
     widescreen: yes
 ---
 
-## Slide with Bullets
+## Plan for today
+- PCA
+- PCoA
+- NMDS
+- Correspondence analysis
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
 
 ## Load packages and functions
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 # (vegan must be loaded after ade4 to avoid some conflicts)
 library(ade4)
 library(vegan)
@@ -43,24 +46,37 @@ env <- env[-8,]
 spa <- spa[-8,]
 ```
 
+## Intro to CA
+-CA is well suited to the analysis of species abundance data without pre-transformation. 
+
+-data submitted to CA must be frequencies or frequency-like, dimensionally homogeneous and non-negative (as is the case of species counts or presence–absence data)
+
+
 ## CA of the raw species dataset (original species abundances)
 ```{r}
 # Compute CA
 spe.ca <- cca(spe)
 spe.ca
 summary(spe.ca)		# default scaling 2
-summary(spe.ca, scaling=1)
+summary(spe.ca, scaling=1) 
+## things to note: the first axis has a very large eigenvalue. In CA, a value over 0.6 indicate a very strong gradient in the data. Note that the eigenvalues are the same in both scalings. The scaling affects the eigenvectors, not the eigenvalues. 
 ```
+## Scaling options
+- when scaling = 1 the distances among objects approximate their x2 distances (i.e. object points close together are similar in their species frequencies). Any object near the point representing a species is likely to contain a high contribution of that species. 
+
+- when scaling = 2, ordination of species. Species points close to one another are likely to have similar relative frequencies among objects. 
+
+
 
 ## Plot eigenvalues and % of variance for each axis
 ```{r}
-(ev2 <- spe.ca$CA$eig)
+ev2 <- spe.ca$CA$eig
 ```
 ## plot 
 ```{r}
 evplot(ev2)
 ```
-
+-things to note: the first axis is extremely dominant. 
 
 ## CA biplots
 ```{r}
@@ -71,6 +87,9 @@ plot(spe.ca, scaling=1, main="CA fish abundances - biplot scaling 1")
 plot(spe.ca, main="CA fish abundances - biplot scaling 2")
 ```
 ## A posteriori projection of environmental variables in a CA
+-envfit finds vectors or factor averages of environmental variables. [...] The projections of points onto vectors have maximum correlation with corresponding environmental variables, and the factors show the averages of factor levels”
+	
+## CA biplot (scaling 2) of the Doubs fish abundance data with a posteriori projection of environmental variables
 
 ```{r}
 # The last plot produced (CA scaling 2) must be active
@@ -97,6 +116,12 @@ biplot(spe.CA.PL, cex=1)
 summary(spe.CA.PL)
 t(spe[order(spe.CA.PL$F[,1]), order(spe.CA.PL$V[,1])])
 ```
+
+## NMDS
+-the objective is to plot dissimilar objects far apart in the ordination space and similar objects close to one another.
+-can use any distance matrix
+-can deal with missing data
+
 
 ## NMDS applied to the fish species - Bray-Curtis distance matrix
 

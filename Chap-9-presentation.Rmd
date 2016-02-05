@@ -198,10 +198,14 @@ spa <- spa[-8,]
 ## CA of the raw species dataset (original species abundances)
 ```{r}
 # Compute CA
+## things to note: the first axis has a very large eigenvalue. 
+## In CA, a value over 0.6 indicate a very strong gradient in the data. 
+## Note that the eigenvalues are the same in both scalings. 
+## The scaling affects the eigenvectors, not the eigenvalues. 
 spe.ca <- cca(spe)
 summary(spe.ca)		# default scaling 2
 summary(spe.ca, scaling=1) 
-## things to note: the first axis has a very large eigenvalue. In CA, a value over 0.6 indicate a very strong gradient in the data. Note that the eigenvalues are the same in both scalings. The scaling affects the eigenvectors, not the eigenvalues. 
+
 ```
 ## Scaling options
 - when scaling = 1 the distances among objects approximate their x2 distances (i.e. object points close together are similar in their species frequencies). Any object near the point representing a species is likely to contain a high contribution of that species. 

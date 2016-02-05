@@ -246,18 +246,18 @@ fit
 ## ***VECTORS
 ## 
 ##             NMDS1    NMDS2     r2 Pr(>r)    
-## N        -0.05038 -0.99873 0.2080  0.086 .  
-## P         0.68719  0.72647 0.1755  0.117    
-## K         0.82745  0.56155 0.1657  0.152    
-## Ca        0.75024  0.66116 0.2809  0.022 *  
-## Mg        0.69691  0.71716 0.3492  0.009 ** 
-## S         0.27645  0.96103 0.1774  0.114    
+## N        -0.05038 -0.99873 0.2080  0.100 .  
+## P         0.68719  0.72647 0.1755  0.141    
+## K         0.82745  0.56155 0.1657  0.153    
+## Ca        0.75024  0.66116 0.2809  0.034 *  
+## Mg        0.69691  0.71716 0.3492  0.018 *  
+## S         0.27645  0.96103 0.1774  0.154    
 ## Al       -0.83757  0.54633 0.5155  0.001 ***
-## Fe       -0.86169  0.50743 0.3999  0.004 ** 
-## Mn        0.80219 -0.59707 0.5323  0.001 ***
-## Zn        0.66537  0.74651 0.1779  0.115    
-## Mo       -0.84867  0.52892 0.0517  0.546    
-## Baresoil  0.87189 -0.48971 0.2494  0.048 *  
+## Fe       -0.86169  0.50743 0.3999  0.008 ** 
+## Mn        0.80219 -0.59707 0.5323  0.002 ** 
+## Zn        0.66537  0.74651 0.1779  0.154    
+## Mo       -0.84867  0.52892 0.0517  0.564    
+## Baresoil  0.87189 -0.48971 0.2494  0.049 *  
 ## Humdepth  0.92623 -0.37696 0.5590  0.001 ***
 ## pH       -0.79900  0.60133 0.2625  0.038 *  
 ## ---
@@ -327,6 +327,10 @@ spa <- spa[-8,]
 
 ```r
 # Compute CA
+## things to note: the first axis has a very large eigenvalue. 
+## In CA, a value over 0.6 indicate a very strong gradient in the data. 
+## Note that the eigenvalues are the same in both scalings. 
+## The scaling affects the eigenvectors, not the eigenvalues. 
 spe.ca <- cca(spe)
 summary(spe.ca)		# default scaling 2
 ```
@@ -544,10 +548,6 @@ summary(spe.ca, scaling=1)
 ## 29 -0.47146 -0.077222  0.1809010  0.125954  0.034090  0.05241
 ## 30 -0.62686 -0.007444  0.2190226  0.254487  0.119787  0.03366
 ```
-
-```r
-## things to note: the first axis has a very large eigenvalue. In CA, a value over 0.6 indicate a very strong gradient in the data. Note that the eigenvalues are the same in both scalings. The scaling affects the eigenvectors, not the eigenvalues. 
-```
 ## Scaling options
 - when scaling = 1 the distances among objects approximate their x2 distances (i.e. object points close together are similar in their species frequencies). Any object near the point representing a species is likely to contain a high contribution of that species. 
 
@@ -602,13 +602,13 @@ plot(spe.ca, main="CA fish abundances - biplot scaling 2")
 ## alt  0.81141  0.58448 0.8080  0.001 ***
 ## pen  0.73753  0.67531 0.2976  0.006 ** 
 ## deb -0.92837 -0.37166 0.4440  0.001 ***
-## pH   0.50723 -0.86181 0.0908  0.251    
-## dur -0.71728 -0.69678 0.4722  0.001 ***
-## pho -0.99897  0.04533 0.1757  0.088 .  
-## nit -0.94906 -0.31511 0.4510  0.001 ***
-## amm -0.97495  0.22241 0.1762  0.084 .  
+## pH   0.50723 -0.86181 0.0908  0.243    
+## dur -0.71728 -0.69678 0.4722  0.002 ** 
+## pho -0.99897  0.04533 0.1757  0.087 .  
+## nit -0.94906 -0.31511 0.4510  0.002 ** 
+## amm -0.97495  0.22241 0.1762  0.080 .  
 ## oxy  0.93352 -0.35854 0.6263  0.001 ***
-## dbo -0.94094  0.33857 0.2237  0.037 *  
+## dbo -0.94094  0.33857 0.2237  0.030 *  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## Permutation: free

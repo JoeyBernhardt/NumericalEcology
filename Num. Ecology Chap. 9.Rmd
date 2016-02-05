@@ -216,6 +216,7 @@ vpcoa.env <- envfit(vpcoa, varechem)
 plot(vpcoa.env, add=TRUE)
 vpcoa.env
 ```
+![envfit](envfit.png)
 
 ## How well are distances preserved
 - Shepard Diagram tests association between original distances and distances projected in ordination space.

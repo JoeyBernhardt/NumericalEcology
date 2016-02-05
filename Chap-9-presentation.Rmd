@@ -59,7 +59,8 @@ str(varespec)
 ## Running NMDS
 
 ```{r}
-varespec.nmds.bray <- metaMDS(varespec, distance="bray", trace=FALSE, trymax=100) ## trace = FALSE, won't show all the outputs, trymax= number of starts
+varespec.nmds.bray <- metaMDS(varespec, distance="bray", trace=FALSE, trymax=100) 
+## trace = FALSE, won't show all the outputs, trymax= number of starts
 varespec.nmds.bray
 ```
 
@@ -80,9 +81,9 @@ plot(varespec.nmds.bray, type="t")
 ## evaluating NMDS mapping
 
 ```{r}
-stressplot(varespec.nmds.bray) 
 ## plots the observed disimilarity values vs. their ordination distance. 
 ## If NMDS is a good representation of actual values, you'll see a good fit
+stressplot(varespec.nmds.bray) 
 ```
 
 
@@ -134,14 +135,13 @@ str(varechem)
 ## Overlaying vectors with envfit
 
 ```{r}
+# first two columns are direction cosines of the vectors, and `r2` gives the squared correlation coefficient
+# when plotted, vectors should be scaled by square root of `r2`. `plot` does this automatically (see next slide)
+# significances (`Pr>r`) are based on  random permutations of the data: if if you often get as good or better R2 with randomly permuted data, your values are insignificant.
 fit <- envfit(varespec.nmds.bray, varechem, permu=999)
 fit
 ```
 
-- first two columns are direction cosines of the vectors, and `r2` gives the squared correlation coefficient
-- when plotted, vectors should be scaled by square root of `r2`. `plot` does this automatically (see next slide)
-- significances (`Pr>r`) are based on  random permutations of the data: if if you often get as good or better R2 with randomly permuted data, your values are insignificant.
-</small>
 
 ## Plotting envfit output
 
@@ -216,8 +216,8 @@ ev2 <- spe.ca$CA$eig
 ```
 ## plot 
 ```{r}
-evplot(ev2)
 ## things to note: the first axis is extremely dominant. 
+evplot(ev2)
 ```
 
 
@@ -248,16 +248,14 @@ plot(spe.ca.env, p.max=0.05, col=3)
 ```{r}
 vegemite(spe, spe.ca)
 ```
+
 ## CA using CA() function
-
 ```{r}
-spe.CA.PL <- CA(spe)
-biplot(spe.CA.PL, cex=1)
-
 # Ordering of the data table following the first CA axis
 # The table is transposed, as in vegemite() output
-summary(spe.CA.PL)
-t(spe[order(spe.CA.PL$F[,1]), order(spe.CA.PL$V[,1])])
+spe.CA.PL <- CA(spe)
+biplot(spe.CA.PL, cex=1)
 ```
+
 ## useful links
 - [PCA vs CA?](http://stats.stackexchange.com/questions/70533/using-principal-components-analysis-vs-correspondence-analysis)

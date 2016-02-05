@@ -104,7 +104,8 @@ str(varespec)
 
 
 ```r
-varespec.nmds.bray <- metaMDS(varespec, distance="bray", trace=FALSE, trymax=100) ## trace = FALSE, won't show all the outputs, trymax= number of starts
+varespec.nmds.bray <- metaMDS(varespec, distance="bray", trace=FALSE, trymax=100) 
+## trace = FALSE, won't show all the outputs, trymax= number of starts
 varespec.nmds.bray
 ```
 
@@ -121,7 +122,7 @@ varespec.nmds.bray
 ## Dimensions: 2 
 ## Stress:     0.1843196 
 ## Stress type 1, weak ties
-## Two convergent solutions found after 2 tries
+## Two convergent solutions found after 10 tries
 ## Scaling: centring, PC rotation, halfchange scaling 
 ## Species: expanded scores based on 'wisconsin(sqrt(varespec))'
 ```
@@ -147,15 +148,12 @@ plot(varespec.nmds.bray, type="t")
 
 
 ```r
+## plots the observed disimilarity values vs. their ordination distance. 
+## If NMDS is a good representation of actual values, you'll see a good fit
 stressplot(varespec.nmds.bray) 
 ```
 
 ![](Chap-9-presentation_files/figure-html/unnamed-chunk-6-1.png) 
-
-```r
-## plots the observed disimilarity values vs. their ordination distance. 
-## If NMDS is a good representation of actual values, you'll see a good fit
-```
 
 
 ## goodness of fit
@@ -236,6 +234,9 @@ str(varechem)
 
 
 ```r
+# first two columns are direction cosines of the vectors, and `r2` gives the squared correlation coefficient
+# when plotted, vectors should be scaled by square root of `r2`. `plot` does this automatically (see next slide)
+# significances (`Pr>r`) are based on  random permutations of the data: if if you often get as good or better R2 with randomly permuted data, your values are insignificant.
 fit <- envfit(varespec.nmds.bray, varechem, permu=999)
 fit
 ```
@@ -246,29 +247,25 @@ fit
 ## 
 ##             NMDS1    NMDS2     r2 Pr(>r)    
 ## N        -0.05038 -0.99873 0.2080  0.086 .  
-## P         0.68709  0.72657 0.1755  0.144    
-## K         0.82735  0.56169 0.1657  0.139    
-## Ca        0.75019  0.66123 0.2810  0.037 *  
-## Mg        0.69682  0.71725 0.3493  0.015 *  
-## S         0.27634  0.96106 0.1774  0.133    
-## Al       -0.83769  0.54614 0.5155  0.001 ***
-## Fe       -0.86187  0.50713 0.4000  0.006 ** 
-## Mn        0.80229 -0.59694 0.5322  0.001 ***
-## Zn        0.66526  0.74662 0.1779  0.130    
-## Mo       -0.84872  0.52883 0.0517  0.609    
-## Baresoil  0.87202 -0.48947 0.2494  0.060 .  
-## Humdepth  0.92631 -0.37675 0.5590  0.001 ***
-## pH       -0.79906  0.60125 0.2624  0.039 *  
+## P         0.68719  0.72647 0.1755  0.117    
+## K         0.82745  0.56155 0.1657  0.152    
+## Ca        0.75024  0.66116 0.2809  0.022 *  
+## Mg        0.69691  0.71716 0.3492  0.009 ** 
+## S         0.27645  0.96103 0.1774  0.114    
+## Al       -0.83757  0.54633 0.5155  0.001 ***
+## Fe       -0.86169  0.50743 0.3999  0.004 ** 
+## Mn        0.80219 -0.59707 0.5323  0.001 ***
+## Zn        0.66537  0.74651 0.1779  0.115    
+## Mo       -0.84867  0.52892 0.0517  0.546    
+## Baresoil  0.87189 -0.48971 0.2494  0.048 *  
+## Humdepth  0.92623 -0.37696 0.5590  0.001 ***
+## pH       -0.79900  0.60133 0.2625  0.038 *  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## Permutation: free
 ## Number of permutations: 999
 ```
 
-- first two columns are direction cosines of the vectors, and `r2` gives the squared correlation coefficient
-- when plotted, vectors should be scaled by square root of `r2`. `plot` does this automatically (see next slide)
-- significances (`Pr>r`) are based on  random permutations of the data: if if you often get as good or better R2 with randomly permuted data, your values are insignificant.
-</small>
 
 ## Plotting envfit output
 
@@ -566,14 +563,11 @@ ev2 <- spe.ca$CA$eig
 ## plot 
 
 ```r
+## things to note: the first axis is extremely dominant. 
 evplot(ev2)
 ```
 
 ![](Chap-9-presentation_files/figure-html/unnamed-chunk-17-1.png) 
-
-```r
-## things to note: the first axis is extremely dominant. 
-```
 
 
 ## CA biplots
@@ -608,13 +602,13 @@ plot(spe.ca, main="CA fish abundances - biplot scaling 2")
 ## alt  0.81141  0.58448 0.8080  0.001 ***
 ## pen  0.73753  0.67531 0.2976  0.006 ** 
 ## deb -0.92837 -0.37166 0.4440  0.001 ***
-## pH   0.50723 -0.86181 0.0908  0.238    
-## dur -0.71728 -0.69678 0.4722  0.002 ** 
-## pho -0.99897  0.04533 0.1757  0.073 .  
-## nit -0.94906 -0.31511 0.4510  0.002 ** 
-## amm -0.97495  0.22241 0.1762  0.073 .  
+## pH   0.50723 -0.86181 0.0908  0.251    
+## dur -0.71728 -0.69678 0.4722  0.001 ***
+## pho -0.99897  0.04533 0.1757  0.088 .  
+## nit -0.94906 -0.31511 0.4510  0.001 ***
+## amm -0.97495  0.22241 0.1762  0.084 .  
 ## oxy  0.93352 -0.35854 0.6263  0.001 ***
-## dbo -0.94094  0.33857 0.2237  0.039 *  
+## dbo -0.94094  0.33857 0.2237  0.037 *  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## Permutation: free
@@ -670,102 +664,17 @@ vegemite(spe, spe.ca)
 ##   sites species 
 ##      29      27
 ```
+
 ## CA using CA() function
 
-
 ```r
+# Ordering of the data table following the first CA axis
+# The table is transposed, as in vegemite() output
 spe.CA.PL <- CA(spe)
 biplot(spe.CA.PL, cex=1)
 ```
 
 ![](Chap-9-presentation_files/figure-html/unnamed-chunk-21-1.png) 
 
-```r
-# Ordering of the data table following the first CA axis
-# The table is transposed, as in vegemite() output
-summary(spe.CA.PL)
-```
-
-```
-##               Length Class  Mode     
-## total.inertia   1    -none- numeric  
-## eigenvalues    26    -none- numeric  
-## rel.eigen      26    -none- numeric  
-## rel.cum.eigen  26    -none- numeric  
-## U             702    -none- numeric  
-## Uhat          754    -none- numeric  
-## F             754    -none- numeric  
-## Fhat          702    -none- numeric  
-## V             702    -none- numeric  
-## Vhat          754    -none- numeric  
-## site.names     29    -none- character
-## sp.names       27    -none- character
-## color.sites     1    -none- character
-## color.sp        1    -none- character
-## call            2    -none- call
-```
-
-```r
-t(spe[order(spe.CA.PL$F[,1]), order(spe.CA.PL$V[,1])])
-```
-
-```
-##     24 30 28 26 27 22 23 25 21 29 20 19 18 5 9 17 16 6 10 4 15 14 7 3 11
-## PCH  0  5  3  1  2  2  0  0  1  4  0  0  0 0 0  0  0 0  0 0  0  0 0 0  0
-## BBO  1  5  5  2  4  4  0  0  3  4  2  1  0 0 0  0  0 0  0 0  0  0 0 0  0
-## BCO  0  5  3  2  3  4  0  0  3  4  1  1  0 0 0  0  0 0  0 0  0  0 0 0  0
-## GRE  2  5  5  4  5  4  0  1  3  5  2  1  1 0 0  0  0 0  0 0  0  0 0 0  0
-## ANG  0  5  4  2  3  2  0  0  2  4  2  1  1 0 0  1  0 0  0 0  0  0 0 0  0
-## ABL  5  5  5  5  5  5  2  3  5  5  5  3  2 0 0  2  0 0  0 0  0  0 0 0  0
-## ROT  0  5  2  1  1  2  0  1  2  2  2  1  0 2 0  0  0 0  0 0  0  0 0 0  0
-## BOU  0  5  4  2  3  3  0  0  3  5  3  2  2 0 0  1  0 0  0 0  0  0 0 0  0
-## PSO  1  3  4  2  3  3  0  0  2  5  2  1  1 0 0  1  1 0  0 0  0  0 0 0  0
-## CAR  0  5  4  1  2  3  0  0  2  3  1  1  1 0 0  1  1 0  0 0  0  0 0 0  0
-## HOT  1  1  1  1  1  3  0  0  2  2  2  2  1 0 0  1  0 0  0 0  0  0 0 0  0
-## GAR  2  5  5  4  5  5  1  1  5  5  5  5  2 5 4  2  1 1  0 0  0  0 0 0  0
-## SPI  0  5  1  1  1  1  0  0  2  3  3  2  3 0 0  4  1 0  0 0  0  0 0 0  0
-## TAN  0  5  4  3  5  4  0  0  4  3  4  2  1 3 1  1  1 2  0 1  1  0 0 0  0
-## BAR  0  3  3  2  4  5  0  0  4  5  4  2  3 0 0  3  2 0  0 0  2  1 0 0  0
-## GOU  1  5  4  3  4  5  0  2  5  5  4  4  2 2 0  1  2 1  1 1  2  1 0 0  0
-## PER  0  5  2  1  1  4  0  0  3  4  2  1  3 4 0  2  1 1  0 2  0  0 0 0  0
-## BRO  0  4  3  2  4  3  0  1  3  5  2  1  1 4 0  1  1 1  0 2  0  1 0 1  0
-## TOX  0  2  1  0  1  2  0  0  2  2  2  3  3 0 0  4  4 0  0 0  0  0 0 0  0
-## CHE  2  3  4  2  3  4  1  1  2  4  3  1  3 2 5  2  2 2  2 1  3  1 1 0  1
-## VAN  0  3  2  1  2  3  0  1  2  3  2  2  2 5 0  3  5 1  2 0  3  0 1 0  0
-## LOC  0  0  1  1  1  1  0  0  1  1  2  5  3 2 3  4  5 5  4 5  5  4 5 5  1
-## BLA  0  0  0  0  0  0  0  0  0  1  0  1  1 0 0  2  5 0  0 0  4  3 0 0  0
-## VAI  0  0  0  0  0  0  0  0  1  1  1  3  3 3 1  4  3 4  4 5  4  5 4 5  4
-## CHA  0  0  0  0  0  0  0  0  0  0  0  0  1 0 0  1  2 0  0 0  3  3 0 0  1
-## OMB  0  0  0  0  0  0  0  0  0  1  0  0  1 0 0  1  0 0  0 0  2  4 0 0  1
-## TRU  0  0  0  0  0  0  0  0  0  1  0  0  1 2 0  2  3 3  1 4  4  5 5 5  3
-##     12 2 13 1
-## PCH  0 0  0 0
-## BBO  0 0  0 0
-## BCO  0 0  0 0
-## GRE  0 0  0 0
-## ANG  0 0  0 0
-## ABL  0 0  0 0
-## ROT  0 0  0 0
-## BOU  0 0  0 0
-## PSO  0 0  0 0
-## CAR  0 0  0 0
-## HOT  0 0  0 0
-## GAR  0 0  0 0
-## SPI  0 0  0 0
-## TAN  0 0  0 0
-## BAR  0 0  0 0
-## GOU  0 0  0 0
-## PER  0 0  0 0
-## BRO  0 0  0 0
-## TOX  0 0  0 0
-## CHE  1 0  0 0
-## VAN  0 0  0 0
-## LOC  4 3  2 0
-## BLA  0 0  2 0
-## VAI  4 4  5 0
-## CHA  2 0  2 0
-## OMB  2 0  3 0
-## TRU  5 5  5 3
-```
 ## useful links
 - [PCA vs CA?](http://stats.stackexchange.com/questions/70533/using-principal-components-analysis-vs-correspondence-analysis)

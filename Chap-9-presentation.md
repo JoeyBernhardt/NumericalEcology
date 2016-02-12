@@ -3,10 +3,10 @@ Joey and Sean
 
 
 ## Plan for today
-- PCA
-- PCoA
 - NMDS
 - Correspondence analysis
+- Big thanks to Tim Bowles for sharing his code on vegan!!
+- I will use a lot of it today!
 
 ## Load packages and functions
 
@@ -121,9 +121,9 @@ varespec.nmds.bray
 ## Distance: bray 
 ## 
 ## Dimensions: 2 
-## Stress:     0.1843196 
+## Stress:     0.182566 
 ## Stress type 1, weak ties
-## Two convergent solutions found after 7 tries
+## Two convergent solutions found after 22 tries
 ## Scaling: centring, PC rotation, halfchange scaling 
 ## Species: expanded scores based on 'wisconsin(sqrt(varespec))'
 ```
@@ -237,7 +237,8 @@ str(varechem)
 ```r
 # first two columns are direction cosines of the vectors, and `r2` gives the squared correlation coefficient
 # when plotted, vectors should be scaled by square root of `r2`. `plot` does this automatically (see next slide)
-# significances (`Pr>r`) are based on  random permutations of the data: if if you often get as good or better R2 with randomly permuted data, your values are insignificant.
+# significances (`Pr>r`) are based on  random permutations of the data
+# if you often get as good or better R2 with randomly permuted data, your values are insignificant.
 fit <- envfit(varespec.nmds.bray, varechem, permu=999)
 fit
 ```
@@ -247,20 +248,20 @@ fit
 ## ***VECTORS
 ## 
 ##             NMDS1    NMDS2     r2 Pr(>r)    
-## N        -0.05038 -0.99873 0.2080  0.088 .  
-## P         0.68719  0.72647 0.1755  0.127    
-## K         0.82745  0.56155 0.1657  0.166    
-## Ca        0.75024  0.66116 0.2809  0.020 *  
-## Mg        0.69691  0.71716 0.3492  0.009 ** 
-## S         0.27645  0.96103 0.1774  0.143    
-## Al       -0.83757  0.54633 0.5155  0.001 ***
-## Fe       -0.86169  0.50743 0.3999  0.005 ** 
-## Mn        0.80219 -0.59707 0.5323  0.001 ***
-## Zn        0.66537  0.74651 0.1779  0.134    
-## Mo       -0.84867  0.52892 0.0517  0.598    
-## Baresoil  0.87189 -0.48971 0.2494  0.050 *  
-## Humdepth  0.92623 -0.37696 0.5590  0.002 ** 
-## pH       -0.79900  0.60133 0.2625  0.040 *  
+## N        -0.05762 -0.99834 0.2534  0.032 *  
+## P         0.61985  0.78472 0.1940  0.117    
+## K         0.76673  0.64197 0.1810  0.139    
+## Ca        0.68549  0.72809 0.4119  0.005 ** 
+## Mg        0.63277  0.77434 0.4269  0.003 ** 
+## S         0.19164  0.98146 0.1751  0.151    
+## Al       -0.87147  0.49046 0.5269  0.001 ***
+## Fe       -0.93570  0.35280 0.4450  0.002 ** 
+## Mn        0.79887 -0.60150 0.5231  0.003 ** 
+## Zn        0.61756  0.78652 0.1880  0.127    
+## Mo       -0.90342  0.42875 0.0610  0.522    
+## Baresoil  0.92453 -0.38112 0.2508  0.049 *  
+## Humdepth  0.93273 -0.36058 0.5201  0.002 ** 
+## pH       -0.64797  0.76166 0.2308  0.069 .  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## Permutation: free
@@ -270,10 +271,9 @@ fit
 
 ## Plotting envfit output
 
-- The arrow points to the direction of most rapid change in the the
-environmental variable. Often this is called the direction of the
-gradient.
-- The length of the arrow is proportional to the correlation between
+- The arrow points to the direction of most rapid change in the
+env. variable (this is called the direction of the gradient)
+- The length of the arrow is proportional to the correlation between 
 ordination and environmental variable. Often this is called the
 strength of the gradient.
 
@@ -601,13 +601,13 @@ plot(spe.ca, main="CA fish abundances - biplot scaling 2")
 ##          CA1      CA2     r2 Pr(>r)    
 ## das -0.94801 -0.31825 0.6889  0.001 ***
 ## alt  0.81141  0.58448 0.8080  0.001 ***
-## pen  0.73753  0.67531 0.2976  0.002 ** 
+## pen  0.73753  0.67531 0.2976  0.004 ** 
 ## deb -0.92837 -0.37166 0.4440  0.001 ***
-## pH   0.50723 -0.86181 0.0908  0.239    
-## dur -0.71728 -0.69678 0.4722  0.002 ** 
-## pho -0.99897  0.04533 0.1757  0.056 .  
+## pH   0.50723 -0.86181 0.0908  0.237    
+## dur -0.71728 -0.69678 0.4722  0.001 ***
+## pho -0.99897  0.04533 0.1757  0.066 .  
 ## nit -0.94906 -0.31511 0.4510  0.001 ***
-## amm -0.97495  0.22241 0.1762  0.060 .  
+## amm -0.97495  0.22241 0.1762  0.073 .  
 ## oxy  0.93352 -0.35854 0.6263  0.001 ***
 ## dbo -0.94094  0.33857 0.2237  0.034 *  
 ## ---

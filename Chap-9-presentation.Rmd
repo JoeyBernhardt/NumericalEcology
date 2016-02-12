@@ -10,10 +10,10 @@ output:
 
 
 ## Plan for today
-- PCA
-- PCoA
 - NMDS
 - Correspondence analysis
+- Big thanks to Tim Bowles for sharing his code on vegan!!
+- I will use a lot of it today!
 
 ## Load packages and functions
 
@@ -138,7 +138,8 @@ str(varechem)
 ```{r}
 # first two columns are direction cosines of the vectors, and `r2` gives the squared correlation coefficient
 # when plotted, vectors should be scaled by square root of `r2`. `plot` does this automatically (see next slide)
-# significances (`Pr>r`) are based on  random permutations of the data: if if you often get as good or better R2 with randomly permuted data, your values are insignificant.
+# significances (`Pr>r`) are based on  random permutations of the data
+# if you often get as good or better R2 with randomly permuted data, your values are insignificant.
 fit <- envfit(varespec.nmds.bray, varechem, permu=999)
 fit
 ```
@@ -146,10 +147,9 @@ fit
 
 ## Plotting envfit output
 
-- The arrow points to the direction of most rapid change in the the
-environmental variable. Often this is called the direction of the
-gradient.
-- The length of the arrow is proportional to the correlation between
+- The arrow points to the direction of most rapid change in the
+env. variable (this is called the direction of the gradient)
+- The length of the arrow is proportional to the correlation between 
 ordination and environmental variable. Often this is called the
 strength of the gradient.
 

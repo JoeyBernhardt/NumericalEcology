@@ -53,7 +53,7 @@ str(varespec)
 - Wraps several recommended procedures into one command:
  + takes raw data and performs 'Wisconsin double standardization' (so abundance isn't influencing similarity)
  + calculates specified dissimilarity matrix
- + runs vegan function `monoMDS` many times with random starts, stopping when it finds two similar configurations with minimum stress
+ + runs vegan function `monoMDS` many times with random starts, until it finds two similar configurations with minimized stress value
  + rotates solution so largest variation of site score is on first axis
  + other details in [vegan tutor](http://cc.oulu.fi/~jarioksa/opetus/metodi/vegantutor.pdf)
 
@@ -69,7 +69,7 @@ varespec.nmds.bray
 ## plotting NMDS
 
 ```{r}
-plot(varespec.nmds.bray, type="t")
+plot(varespec.nmds.bray, type = "t")
 ```
 
 
@@ -127,7 +127,8 @@ plot(pro, kind=2) # shows the shift in sites between two ordinations.
 
 ## Overlaying environmental vectors onto ordination
 
- - environmental data, paired with `varespec` data
+- What if you want to see how environmental variables are related to your ordination??
+- Let's look at environmental data, paired with `varespec` data
 ```{r}
 data(varechem)
 str(varechem)
@@ -136,7 +137,8 @@ str(varechem)
 ## Overlaying vectors with envfit
 
 ```{r}
-# first two columns are direction cosines of the vectors, and `r2` gives the squared correlation coefficient
+# Will base the significance of the fit based on permutations
+# first two columns are direction cosines of the vectors, and `r2` correlation coefficient between the env variable and the two axes. 
 # when plotted, vectors should be scaled by square root of `r2`. `plot` does this automatically (see next slide)
 # significances (`Pr>r`) are based on  random permutations of the data
 # if you often get as good or better R2 with randomly permuted data, your values are insignificant.
@@ -183,7 +185,7 @@ spa <- spa[-8,]
 
 - data submitted to CA must be frequencies or frequency-like, dimensionally homogeneous and non-negative (as is the case of species counts or presence–absence data)
 
--  raw data are transformed into a matrix Q, of cell-by-cell contributions to the pearson χ 2 statistic
+-  raw data are transformed into a matrix Q, of cell-by-cell contributions to the pearson χ 2 statistic (which is calculated on relative counts, and not on the original ones, and it standardizes by the mean and not by the variance)
 
 - get an ordination, where the χ 2 distance is preserved among sites instead of the Euclidean distance. The χ 2 distance is not influenced by double zeros
 

@@ -97,7 +97,7 @@ str(varespec)
 - Wraps several recommended procedures into one command:
  + takes raw data and performs 'Wisconsin double standardization' (so abundance isn't influencing similarity)
  + calculates specified dissimilarity matrix
- + runs vegan function `monoMDS` many times with random starts, stopping when it finds two similar configurations with minimum stress
+ + runs vegan function `monoMDS` many times with random starts, until it finds two similar configurations with minimized stress value
  + rotates solution so largest variation of site score is on first axis
  + other details in [vegan tutor](http://cc.oulu.fi/~jarioksa/opetus/metodi/vegantutor.pdf)
 
@@ -121,9 +121,9 @@ varespec.nmds.bray
 ## Distance: bray 
 ## 
 ## Dimensions: 2 
-## Stress:     0.182566 
+## Stress:     0.1825658 
 ## Stress type 1, weak ties
-## Two convergent solutions found after 22 tries
+## Two convergent solutions found after 14 tries
 ## Scaling: centring, PC rotation, halfchange scaling 
 ## Species: expanded scores based on 'wisconsin(sqrt(varespec))'
 ```
@@ -133,7 +133,7 @@ varespec.nmds.bray
 
 
 ```r
-plot(varespec.nmds.bray, type="t")
+plot(varespec.nmds.bray, type = "t")
 ```
 
 ![](Chap-9-presentation_files/figure-html/unnamed-chunk-5-1.png) 
@@ -206,7 +206,8 @@ plot(pro, kind=2) # shows the shift in sites between two ordinations.
 
 ## Overlaying environmental vectors onto ordination
 
- - environmental data, paired with `varespec` data
+- What if you want to see how environmental variables are related to your ordination??
+- Let's look at environmental data, paired with `varespec` data
 
 ```r
 data(varechem)
@@ -235,7 +236,8 @@ str(varechem)
 
 
 ```r
-# first two columns are direction cosines of the vectors, and `r2` gives the squared correlation coefficient
+# Will base the significance of the fit based on permutations
+# first two columns are direction cosines of the vectors, and `r2` correlation coefficient between the env variable and the two axes. 
 # when plotted, vectors should be scaled by square root of `r2`. `plot` does this automatically (see next slide)
 # significances (`Pr>r`) are based on  random permutations of the data
 # if you often get as good or better R2 with randomly permuted data, your values are insignificant.
@@ -248,20 +250,20 @@ fit
 ## ***VECTORS
 ## 
 ##             NMDS1    NMDS2     r2 Pr(>r)    
-## N        -0.05762 -0.99834 0.2534  0.032 *  
-## P         0.61985  0.78472 0.1940  0.117    
-## K         0.76673  0.64197 0.1810  0.139    
-## Ca        0.68549  0.72809 0.4119  0.005 ** 
-## Mg        0.63277  0.77434 0.4269  0.003 ** 
-## S         0.19164  0.98146 0.1751  0.151    
-## Al       -0.87147  0.49046 0.5269  0.001 ***
-## Fe       -0.93570  0.35280 0.4450  0.002 ** 
-## Mn        0.79887 -0.60150 0.5231  0.003 ** 
-## Zn        0.61756  0.78652 0.1880  0.127    
-## Mo       -0.90342  0.42875 0.0610  0.522    
-## Baresoil  0.92453 -0.38112 0.2508  0.049 *  
-## Humdepth  0.93273 -0.36058 0.5201  0.002 ** 
-## pH       -0.64797  0.76166 0.2308  0.069 .  
+## N        -0.05735 -0.99835 0.2536  0.046 *  
+## P         0.61976  0.78479 0.1938  0.103    
+## K         0.76650  0.64225 0.1809  0.113    
+## Ca        0.68523  0.72832 0.4118  0.004 ** 
+## Mg        0.63256  0.77451 0.4270  0.004 ** 
+## S         0.19141  0.98151 0.1752  0.134    
+## Al       -0.87158  0.49026 0.5269  0.001 ***
+## Fe       -0.93598  0.35204 0.4451  0.002 ** 
+## Mn        0.79868 -0.60175 0.5231  0.001 ***
+## Zn        0.61759  0.78650 0.1879  0.109    
+## Mo       -0.90308  0.42947 0.0609  0.476    
+## Baresoil  0.92485 -0.38032 0.2508  0.047 *  
+## Humdepth  0.93280 -0.36038 0.5200  0.001 ***
+## pH       -0.64793  0.76170 0.2308  0.062 .  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## Permutation: free
@@ -311,7 +313,7 @@ spa <- spa[-8,]
 
 - data submitted to CA must be frequencies or frequency-like, dimensionally homogeneous and non-negative (as is the case of species counts or presence–absence data)
 
--  raw data are transformed into a matrix Q, of cell-by-cell contributions to the pearson χ 2 statistic
+-  raw data are transformed into a matrix Q, of cell-by-cell contributions to the pearson χ 2 statistic (which is calculated on relative counts, and not on the original ones, and it standardizes by the mean and not by the variance)
 
 - get an ordination, where the χ 2 distance is preserved among sites instead of the Euclidean distance. The χ 2 distance is not influenced by double zeros
 
@@ -601,15 +603,15 @@ plot(spe.ca, main="CA fish abundances - biplot scaling 2")
 ##          CA1      CA2     r2 Pr(>r)    
 ## das -0.94801 -0.31825 0.6889  0.001 ***
 ## alt  0.81141  0.58448 0.8080  0.001 ***
-## pen  0.73753  0.67531 0.2976  0.004 ** 
+## pen  0.73753  0.67531 0.2976  0.002 ** 
 ## deb -0.92837 -0.37166 0.4440  0.001 ***
-## pH   0.50723 -0.86181 0.0908  0.237    
-## dur -0.71728 -0.69678 0.4722  0.001 ***
-## pho -0.99897  0.04533 0.1757  0.066 .  
-## nit -0.94906 -0.31511 0.4510  0.001 ***
-## amm -0.97495  0.22241 0.1762  0.073 .  
+## pH   0.50723 -0.86181 0.0908  0.227    
+## dur -0.71728 -0.69678 0.4722  0.002 ** 
+## pho -0.99897  0.04533 0.1757  0.071 .  
+## nit -0.94906 -0.31511 0.4510  0.003 ** 
+## amm -0.97495  0.22241 0.1762  0.064 .  
 ## oxy  0.93352 -0.35854 0.6263  0.001 ***
-## dbo -0.94094  0.33857 0.2237  0.034 *  
+## dbo -0.94094  0.33857 0.2237  0.036 *  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## Permutation: free
